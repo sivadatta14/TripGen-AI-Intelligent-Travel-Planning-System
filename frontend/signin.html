@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | AI Travel Planner</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="main-header">
+        <a href="index.html" class="logo">
+            ✈️ AI Travel Planner
+        </a>
+    </header>
+
+    <div class="form-page">
+        <div class="form-card">
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Sign in to plan and view your trips.</p>
+            
+            <p id="error-msg" class="error-msg"></p>
+
+            <form id="signin-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+
+                <button type="submit" class="primary-btn full-btn">
+                    SIGN IN
+                </button>
+            </form>
+
+            <p style="text-align: center; margin-top: 20px; color: #a0aec0;">
+                Don't have an account? <a href="signup.html" style="color: #5ddcff; text-decoration: none;">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            const user = await checkAuth();
+            if (user && user.logged_in) {
+                window.location.href = "trip-details.html";
+            }
+        });
+
+        document.getElementById("signin-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const errorMsg = document.getElementById("error-msg");
+            errorMsg.style.display = "none";
+
+            try {
+                const res = await signIn(email, password);
+                if (res.success) {
+                    window.location.href = "trip-details.html";
+                }
+            } catch (err) {
+                errorMsg.textContent = err.message;
+                errorMsg.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>

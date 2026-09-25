@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Plan your dream trip with AI. Get a personalized day-by-day travel itinerary based on your preferences, budget and travel style.">
+
+    <title>AI Travel Planner</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            ✈️ AI Travel Planner
+        </div>
+
+
+        <div id="nav-buttons">
+            <a href="signin.html" class="nav-btn">Sign In</a>
+            <a href="signup.html" class="nav-btn">Start Planning</a>
+        </div>
+
+    </nav>
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const nav = document.getElementById("nav-buttons");
+            const user = await checkAuth();
+            if (user && user.logged_in) {
+                nav.innerHTML = `
+                    <span style="color: #a0aec0; margin-right: 15px;">Welcome, ${user.name}</span>
+                    <a href="saved-trips.html" class="nav-btn">💾 Saved Trips</a>
+                    <a href="trip-details.html" class="nav-btn">Start Planning</a>
+                    <button onclick="logOut()" class="nav-btn" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; cursor: pointer; padding: 8px 15px; border-radius: 8px;">Logout</button>
+                `;
+            }
+        });
+    </script>
+
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+
+            <!-- LEFT -->
+
+            <div class="hero-text">
+
+                <div class="badge">
+                    ✨ AI POWERED TRAVEL PLANNER
+                </div>
+
+
+                <h1>
+
+                    Your Dream Trip,
+                    <span>Planned by AI</span>
+
+                </h1>
+
+
+                <p>
+
+                    Enter your destination and let AI create
+                    a personalized day-by-day travel itinerary
+                    based on your preferences, budget and travel style.
+
+                </p>
+
+
+                <a href="trip-details.html"
+                   class="primary-btn">
+
+                    Start Planning →
+
+                </a>
+
+            </div>
+
+
+
+            <!-- RIGHT -->
+
+            <div class="trip-card">
+
+                <div class="card-header">
+
+                    <span>✈️</span>
+
+                    <span>AI Generated</span>
+
+                </div>
+
+
+                <h2>
+
+                    Goa — 4 Day Trip
+
+                </h2>
+
+
+                <div class="trip-info">
+
+                    <div>
+                        👥 2 Travelers
+                    </div>
+
+                    <div>
+                        💰 ₹25,000
+                    </div>
+
+                    <div>
+                        🌴 Relaxed
+                    </div>
+
+                </div>
+
+
+                <div class="day-preview">
+
+                    <h3>
+                        DAY 1
+                    </h3>
+
+                    <p>
+                        🏖️ Explore beautiful beaches
+                    </p>
+
+                    <p>
+                        🍽️ Enjoy local cuisine
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FEATURES -->
+
+    <section class="features">
+
+        <h2>
+            Plan Your Perfect Trip
+        </h2>
+
+
+        <p>
+            Everything you need for a personalized travel experience.
+        </p>
+
+
+        <div class="feature-grid">
+
+
+            <div class="feature-card">
+
+                <div class="icon">
+                    🤖
+                </div>
+
+                <h3>
+                    AI Planning
+                </h3>
+
+                <p>
+                    Get a personalized itinerary created around your interests.
+                </p>
+
+            </div>
+
+
+
+            <div class="feature-card">
+
+                <div class="icon">
+                    📅
+                </div>
+
+                <h3>
+                    Day-by-Day
+                </h3>
+
+                <p>
+                    Organize your entire trip with a clear daily plan.
+                </p>
+
+            </div>
+
+
+
+            <div class="feature-card">
+
+                <div class="icon">
+                    💰
+                </div>
+
+                <h3>
+                    Budget Friendly
+                </h3>
+
+                <p>
+                    Plan your journey according to your available budget.
+                </p>
+
+            </div>
+
+
+
+            <div class="feature-card">
+
+                <div class="icon">
+                    ❤️
+                </div>
+
+                <h3>
+                    Your Preferences
+                </h3>
+
+                <p>
+                    Choose culture, adventure, food, nature and more.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+</body>
+
+</html>

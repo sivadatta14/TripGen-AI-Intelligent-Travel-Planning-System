@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Your AI-generated personalized travel itinerary.">
+
+    <title>Your Trip | AI Travel Planner</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<body>
+    <nav class="navbar" style="position: absolute; top: 0; left: 0; right: 0; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 10;">
+        <div class="logo">
+            <a href="index.html" style="color: inherit; text-decoration: none;">✈️ AI Travel Planner</a>
+        </div>
+        <div id="nav-buttons">
+            <!-- Dynamically populated by JS -->
+        </div>
+    </nav>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const nav = document.getElementById("nav-buttons");
+            const user = await checkAuth();
+            if (user && user.logged_in) {
+                nav.innerHTML = `
+                    <span style="color: #a0aec0; margin-right: 15px;">Welcome, ${user.name}</span>
+                    <a href="saved-trips.html" class="nav-btn" style="color: white; text-decoration: none; margin-right: 15px;">💾 Saved Trips</a>
+                    <button onclick="logOut()" class="nav-btn" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; cursor: pointer; padding: 8px 15px; border-radius: 8px;">Logout</button>
+                `;
+            } else {
+                window.location.href = "signin.html";
+            }
+        });
+    </script>
+
+
+    <div class="results-page">
+
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="results-header">
+
+            <div>
+
+                <div class="step">
+                    YOUR AI-GENERATED TRIP
+                </div>
+
+                <h1>
+                    Your Dream Trip ✈️
+                </h1>
+
+                <p>
+                    Here's your personalized travel itinerary.
+                </p>
+
+            </div>
+
+
+            <button id="download-btn" class="download-btn">
+                📄 Download PDF
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             TRIP SUMMARY
+        ========================== -->
+
+        <div class="summary-grid">
+
+
+            <div class="summary-card">
+
+                <span class="summary-icon">
+                    📍
+                </span>
+
+                <div>
+
+                    <small>
+                        Destination
+                    </small>
+
+                    <strong id="summary-destination">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <span class="summary-icon">
+                    🗓️
+                </span>
+
+                <div>
+
+                    <small>
+                        Duration
+                    </small>
+
+                    <strong id="summary-days">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <span class="summary-icon">
+                    👥
+                </span>
+
+                <div>
+
+                    <small>
+                        Travelers
+                    </small>
+
+                    <strong id="summary-travelers">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="summary-card">
+
+                <span class="summary-icon">
+                    💰
+                </span>
+
+                <div>
+
+                    <small>
+                        Budget
+                    </small>
+
+                    <strong id="summary-budget">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="travel-style-result">
+
+            <span>
+                ✨ Travel Style
+            </span>
+
+            <strong id="summary-travel-style">
+                —
+            </strong>
+
+        </div>
+
+        <div class="travel-style-result" style="margin-top: 15px;">
+
+            <span>
+                🚙 Transport Style
+            </span>
+
+            <strong id="summary-transport-style">
+                —
+            </strong>
+
+        </div>
+
+
+
+        <!-- =========================
+             BUDGET BREAKDOWN
+        ========================== -->
+
+        <section class="result-section budget-section">
+
+
+            <div class="step">
+                💰 BUDGET PLAN
+            </div>
+
+
+            <h2>
+                Estimated Budget Breakdown
+            </h2>
+
+
+            <div class="budget-grid">
+
+
+                <div class="budget-card">
+
+                    <span>
+                        🏨
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Accommodation
+                        </small>
+
+                        <strong id="budget-accommodation">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="budget-card">
+
+                    <span>
+                        🍽️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Food
+                        </small>
+
+                        <strong id="budget-food">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="budget-card">
+
+                    <span>
+                        🚗
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Transport
+                        </small>
+
+                        <strong id="budget-transport">
+                            —
+                        </strong>
+                        
+                        <div id="budget-transport-source" style="font-size: 0.75rem; color: #a0aec0; margin-top: 4px; line-height: 1.2;"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="budget-card">
+
+                    <span>
+                        🎟️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Activities
+                        </small>
+
+                        <strong id="budget-activities">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="budget-card">
+
+                    <span>
+                        🛍️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Shopping
+                        </small>
+
+                        <strong id="budget-shopping">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- BUDGET TOTAL -->
+
+            <div class="budget-total">
+
+
+                <div>
+
+                    <span>
+                        Your Total Budget
+                    </span>
+
+                    <strong id="budget-total">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Estimated Allocation
+                    </span>
+
+                    <strong id="budget-allocation">
+                        —
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             PREFERENCES
+        ========================== -->
+
+        <section class="result-section" id="preferences-section" style="display:none;">
+
+
+            <div class="step">
+                YOUR INTERESTS
+            </div>
+
+
+            <h2>
+                Selected Preferences
+            </h2>
+
+
+            <div class="selected-preferences" id="preferences-tags">
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             AI ITINERARY
+        ========================== -->
+
+        <section class="result-section">
+
+
+            <div class="step">
+                AI-POWERED PLAN
+            </div>
+
+
+            <h2>
+                Your Personalized Itinerary 🤖
+            </h2>
+
+
+            <div id="ai-itinerary-container"></div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             RESTAURANTS
+        ========================== -->
+
+        <section class="result-section restaurant-section">
+
+
+            <div class="step">
+                🍴 FOOD &amp; RESTAURANTS
+            </div>
+
+
+            <h2>
+                Recommended Restaurants
+            </h2>
+
+
+            <p class="restaurant-intro">
+                Discover food places and local cuisine options
+                near your destination.
+            </p>
+
+
+            <div id="restaurant-container"></div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             HOTELS
+        ========================== -->
+
+        <section class="result-section hotel-section">
+
+
+            <div class="step">
+                🏨 STAY OPTIONS
+            </div>
+
+
+            <h2>
+                Recommended Hotels
+            </h2>
+
+
+            <p class="hotel-intro">
+                Find comfortable accommodation options
+                that match your destination and budget.
+            </p>
+
+
+            <div id="hotel-container"></div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             ACTIONS
+        ========================== -->
+
+        <div class="results-actions">
+
+          <button id="save-trip-btn" class="primary-btn">
+             💾 Save Trip
+          </button>
+
+            <a href="preferences.html"
+                class="primary-btn" style="background: transparent; color: #5ddcff; border: 2px solid #5ddcff;">
+                 ← Edit Trip
+            </a>
+            
+            <a href="index.html"
+                class="primary-btn">
+                 Plan Another Trip
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+    <script src="js/api.js"></script>
+
+    <script>
+
+
+        // =========================
+        // LOAD TRIP DATA
+        // =========================
+
+        const raw = sessionStorage.getItem("trip_data");
+
+        if (!raw) {
+            window.location.href = "index.html";
+        }
+
+        const trip = JSON.parse(raw);
+        const destination = trip.destination || "";
+
+
+        // =========================
+        // FILL SUMMARY
+        // =========================
+
+        document.getElementById("summary-destination").textContent = destination;
+        document.getElementById("summary-days").textContent        = trip.days + " Days";
+        document.getElementById("summary-travelers").textContent   = trip.travelers + " People";
+        document.getElementById("summary-budget").textContent      = "₹" + trip.budget;
+        document.getElementById("summary-travel-style").textContent = trip.travel_style;
+        document.getElementById("summary-transport-style").textContent = trip.transport_style || "N/A";
+
+        const bb = trip.budget_breakdown || {};
+        document.getElementById("budget-accommodation").textContent = "₹" + (bb.Accommodation || 0);
+        document.getElementById("budget-food").textContent          = "₹" + (bb.Food || 0);
+        document.getElementById("budget-transport").textContent     = "₹" + (bb.Transport || 0);
+        
+        const transportSource = bb["Transport Source"];
+        const sourceEl = document.getElementById("budget-transport-source");
+        if (transportSource) {
+            sourceEl.textContent = "(" + transportSource + ")";
+        }
+        
+        document.getElementById("budget-activities").textContent    = "₹" + (bb.Activities || 0);
+        document.getElementById("budget-shopping").textContent      = "₹" + (bb.Shopping || 0);
+        document.getElementById("budget-total").textContent         = "₹" + trip.budget;
+        document.getElementById("budget-allocation").textContent    = "₹" + trip.budget;
+
+
+        // =========================
+        // PREFERENCES TAGS
+        // =========================
+
+        if (trip.preferences && trip.preferences.length > 0) {
+
+            const section = document.getElementById("preferences-section");
+            const container = document.getElementById("preferences-tags");
+
+            section.style.display = "";
+
+            trip.preferences.forEach(function (pref) {
+                const tag = document.createElement("span");
+                tag.className = "preference-tag";
+                tag.textContent = pref;
+                container.appendChild(tag);
+            });
+
+        }
+
+
+        // =========================
+        // CREATE DAY CARDS
+        // =========================
+
+        function createDayCards(text) {
+
+            const container = document.getElementById("ai-itinerary-container");
+
+            const daySections =
+                text.split(
+                    /(?=DAY\s+\d+\s*[—-])/i
+                );
+
+
+            daySections.forEach(
+                function(dayText) {
+
+                    dayText = dayText.trim();
+
+                    if (!dayText) {
+                        return;
+                    }
+
+
+                    const dayCard = document.createElement("div");
+                    dayCard.className = "ai-day-card";
+
+
+                    const lines = dayText.split(/\r?\n/);
+                    const dayTitle = lines[0].trim();
+
+                    const title = document.createElement("h3");
+                    title.textContent = dayTitle;
+                    dayCard.appendChild(title);
+
+
+                    const sections =
+                        dayText.split(
+                            /(?=^\s*(?:MORNING|AFTERNOON|EVENING)\s*$)/im
+                        );
+
+
+                    sections.forEach(
+                        function(sectionText) {
+
+                            sectionText = sectionText.trim();
+
+                            if (!sectionText) {
+                                return;
+                            }
+
+                            const match =
+                                sectionText.match(
+                                    /^(MORNING|AFTERNOON|EVENING)\s*$/im
+                                );
+
+                            if (!match) {
+                                return;
+                            }
+
+                            const sectionName = match[1].toUpperCase();
+
+                            const content =
+                                sectionText
+                                    .replace(
+                                        /^(MORNING|AFTERNOON|EVENING)\s*/i,
+                                        ""
+                                    )
+                                    .trim();
+
+
+                            const activity = document.createElement("div");
+                            activity.className = "ai-activity";
+
+                            const heading = document.createElement("h4");
+                            heading.textContent = sectionName;
+                            activity.appendChild(heading);
+
+
+                            const contentLines = content.split(/\r?\n/);
+
+                            contentLines.forEach(
+                                function(line) {
+
+                                    line = line.trim();
+
+                                    if (!line) {
+                                        return;
+                                    }
+
+                                    const paragraph = document.createElement("p");
+                                    paragraph.textContent = line;
+                                    activity.appendChild(paragraph);
+
+
+                                    if (
+                                        line
+                                            .toLowerCase()
+                                            .startsWith("place:")
+                                    ) {
+
+                                        const placeName =
+                                            line
+                                                .replace(/^place:\s*/i, "")
+                                                .trim();
+
+                                        if (placeName) {
+
+                                            const mapButton = document.createElement("a");
+
+                                            mapButton.href =
+                                                "https://www.google.com/maps/search/?api=1&query=" +
+                                                encodeURIComponent(placeName + ", " + destination);
+
+                                            mapButton.target = "_blank";
+                                            mapButton.rel = "noopener noreferrer";
+                                            mapButton.className = "map-button";
+                                            mapButton.textContent = "📍 View on Map";
+
+                                            activity.appendChild(mapButton);
+
+                                        }
+
+                                    }
+
+                                }
+                            );
+
+
+                            dayCard.appendChild(activity);
+
+                        }
+                    );
+
+
+                    container.appendChild(dayCard);
+
+                }
+            );
+
+        }
+
+        createDayCards(trip.itinerary || "");
+
+
+        // =========================
+        // CREATE RESTAURANT CARDS
+        // =========================
+
+        function createRestaurantCards(text) {
+
+            const container = document.getElementById("restaurant-container");
+
+            const restaurants = text.split(/(?=RESTAURANT\s+\d+)/i);
+
+            restaurants.forEach(
+                function(restaurantText) {
+
+                    restaurantText = restaurantText.trim();
+
+                    if (!restaurantText) {
+                        return;
+                    }
+
+                    const card = document.createElement("div");
+                    card.className = "restaurant-card";
+
+                    const lines = restaurantText.split(/\r?\n/);
+
+                    let restaurantName = "";
+                    let cuisine = "";
+                    let price = "";
+                    let description = "";
+
+                    lines.forEach(function(line) {
+
+                        const cleanLine = line.replace(/\*/g, "").trim();
+
+                        if (cleanLine.toLowerCase().startsWith("name:")) {
+                            restaurantName = cleanLine.replace(/^name:\s*/i, "").trim();
+                        }
+                        if (cleanLine.toLowerCase().startsWith("cuisine:")) {
+                            cuisine = cleanLine.replace(/^cuisine:\s*/i, "").trim();
+                        }
+                        if (cleanLine.toLowerCase().startsWith("price:")) {
+                            price = cleanLine.replace(/^price:\s*/i, "").trim();
+                        }
+                        if (cleanLine.toLowerCase().startsWith("description:")) {
+                            description = cleanLine.replace(/^description:\s*/i, "").trim();
+                        }
+
+                    });
+
+                    if (!restaurantName) {
+                        return;
+                    }
+
+                    const title = document.createElement("h3");
+                    title.textContent = "🍛 " + restaurantName;
+                    card.appendChild(title);
+
+                    if (cuisine) {
+                        const el = document.createElement("p");
+                        el.innerHTML = "<strong>🍽️ Cuisine:</strong> " + cuisine;
+                        card.appendChild(el);
+                    }
+
+                    if (price) {
+                        const el = document.createElement("p");
+                        el.innerHTML = "<strong>💰 Price:</strong> " + price;
+                        card.appendChild(el);
+                    }
+
+                    if (description) {
+                        const el = document.createElement("p");
+                        el.textContent = description;
+                        card.appendChild(el);
+                    }
+
+                    const mapButton = document.createElement("a");
+                    mapButton.href =
+                        "https://www.google.com/maps/search/?api=1&query=" +
+                        encodeURIComponent(restaurantName + ", " + destination);
+                    mapButton.target = "_blank";
+                    mapButton.rel = "noopener noreferrer";
+                    mapButton.className = "restaurant-map-button";
+                    mapButton.textContent = "📍 View on Map";
+                    card.appendChild(mapButton);
+
+                    container.appendChild(card);
+
+                }
+            );
+
+        }
+
+        createRestaurantCards(trip.restaurants || "");
+
+
+        // =========================
+        // CREATE HOTEL CARDS
+        // =========================
+
+        function createHotelCards(text) {
+
+            const container = document.getElementById("hotel-container");
+
+            const hotels = text.split(/(?=HOTEL\s+\d+)/i);
+
+            hotels.forEach(
+                function(hotelText) {
+
+                    hotelText = hotelText.trim();
+
+                    if (!hotelText) {
+                        return;
+                    }
+
+                    const card = document.createElement("div");
+                    card.className = "hotel-card";
+
+                    const lines = hotelText.split(/\r?\n/);
+
+                    let hotelName = "";
+                    let category = "";
+                    let price = "";
+                    let description = "";
+
+                    lines.forEach(function(line) {
+
+                        const cleanLine = line.replace(/\*/g, "").trim();
+
+                        if (cleanLine.toLowerCase().startsWith("name:")) {
+                            hotelName = cleanLine.replace(/^name:\s*/i, "").trim();
+                        }
+                        if (cleanLine.toLowerCase().startsWith("category:")) {
+                            category = cleanLine.replace(/^category:\s*/i, "").trim();
+                        }
+                        if (cleanLine.toLowerCase().startsWith("price:")) {
+                            price = cleanLine.replace(/^price:\s*/i, "").trim();
+                        }
+                        if (cleanLine.toLowerCase().startsWith("description:")) {
+                            description = cleanLine.replace(/^description:\s*/i, "").trim();
+                        }
+
+                    });
+
+                    if (!hotelName) {
+                        return;
+                    }
+
+                    const title = document.createElement("h3");
+                    title.textContent = "🏨 " + hotelName;
+                    card.appendChild(title);
+
+                    if (category) {
+                        const el = document.createElement("p");
+                        el.innerHTML = "<strong>⭐ Category:</strong> " + category;
+                        card.appendChild(el);
+                    }
+
+                    if (price) {
+                        const el = document.createElement("p");
+                        el.innerHTML = "<strong>💰 Price:</strong> " + price;
+                        card.appendChild(el);
+                    }
+
+                    if (description) {
+                        const el = document.createElement("p");
+                        el.textContent = description;
+                        card.appendChild(el);
+                    }
+
+                    const mapButton = document.createElement("a");
+                    mapButton.href =
+                        "https://www.google.com/maps/search/?api=1&query=" +
+                        encodeURIComponent(hotelName + ", " + destination);
+                    mapButton.target = "_blank";
+                    mapButton.rel = "noopener noreferrer";
+                    mapButton.className = "hotel-map-button";
+                    mapButton.textContent = "📍 View on Map";
+                    card.appendChild(mapButton);
+
+                    container.appendChild(card);
+
+                }
+            );
+
+        }
+
+        createHotelCards(trip.hotels || "");
+
+
+        // =========================
+        // SAVE TRIP BUTTON
+        // =========================
+
+        document.getElementById("save-trip-btn").addEventListener("click", function () {
+
+            const tripId = trip.trip_id;
+
+            if (!tripId) {
+                alert("No trip ID found. Please generate a new trip.");
+                return;
+            }
+
+            saveTrip(tripId)
+                .then(function () {
+                    alert("Trip saved successfully! 💾");
+                })
+                .catch(function (err) {
+                    alert("Failed to save trip: " + err.message);
+                });
+
+        });
+
+
+        // =========================
+        // DOWNLOAD PDF (PRINT)
+        // =========================
+
+        document.getElementById("download-btn").addEventListener("click", function () {
+            window.print();
+        });
+
+
+    </script>
+
+</body>
+
+</html>

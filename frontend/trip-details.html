@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Enter your trip details to get a personalized AI travel itinerary.">
+
+    <title>Trip Details | AI Travel Planner</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<body>
+
+    <nav class="navbar" style="position: absolute; top: 0; left: 0; right: 0; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 10;">
+        <div class="logo">
+            <a href="index.html" style="color: inherit; text-decoration: none;">✈️ AI Travel Planner</a>
+        </div>
+        <div id="nav-buttons">
+            <!-- Dynamically populated by JS -->
+        </div>
+    </nav>
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const nav = document.getElementById("nav-buttons");
+            const user = await checkAuth();
+            if (user && user.logged_in) {
+                nav.innerHTML = `
+                    <span style="color: #a0aec0; margin-right: 15px;">Welcome, ${user.name}</span>
+                    <a href="saved-trips.html" class="nav-btn" style="color: white; text-decoration: none; margin-right: 15px;">💾 Saved Trips</a>
+                    <button onclick="logOut()" class="nav-btn" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; cursor: pointer; padding: 8px 15px; border-radius: 8px;">Logout</button>
+                `;
+            } else {
+                window.location.href = "signin.html";
+            }
+        });
+    </script>
+
+    <div class="form-page">
+
+        <div class="form-card">
+
+
+            <div class="step">
+                STEP 1 OF 2
+            </div>
+
+
+            <h1>
+                Tell us about your trip
+            </h1>
+
+
+            <p class="subtitle">
+                Give us a few details and we'll create
+                your personalized travel plan.
+            </p>
+
+
+            <form id="trip-details-form">
+
+
+                <!-- CURRENT LOCATION -->
+
+                <label for="current_location">
+                    Current Location
+                </label>
+
+                <input
+                    type="text"
+                    id="current_location"
+                    name="current_location"
+                    placeholder="e.g. Kakinada"
+                    required
+                >
+
+
+                <!-- DESTINATION -->
+
+                <label for="destination">
+                    Destination
+                </label>
+
+                <input
+                    type="text"
+                    id="destination"
+                    name="destination"
+                    placeholder="e.g. Hyderabad"
+                    required
+                >
+
+
+                <!-- DAYS + TRAVELERS -->
+
+                <div class="form-row">
+
+
+                    <div>
+
+                        <label for="days">
+                            Number of Days
+                        </label>
+
+                        <input
+                            type="number"
+                            id="days"
+                            name="days"
+                            min="1"
+                            max="31"
+                            value="4"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="travelers">
+                            Travelers
+                        </label>
+
+                        <input
+                            type="number"
+                            id="travelers"
+                            name="travelers"
+                            min="1"
+                            value="2"
+                            required
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- BUDGET -->
+
+                <label for="budget">
+                    Total Budget (₹)
+                    <br><small style="font-weight: normal; color: #a0aec0;">(Total budget for the entire trip and ALL travelers combined)</small>
+                </label>
+
+                <input
+                    type="number"
+                    id="budget"
+                    name="budget"
+                    min="0"
+                    placeholder="e.g. 25000 (Total for all days & travelers)"
+                    required
+                >
+
+
+                <!-- TRAVEL STYLE -->
+
+                <label for="travel_style">
+                    Travel Style
+                </label>
+
+                <select
+                    id="travel_style"
+                    name="travel_style"
+                    required
+                >
+
+                    <option value="Relaxed">
+                        😌 Relaxed
+                    </option>
+
+                    <option value="Balanced" selected>
+                        ⚖️ Balanced
+                    </option>
+
+                    <option value="Adventure">
+                        🏔️ Adventure
+                    </option>
+
+                    <option value="Luxury">
+                        ✨ Luxury
+                    </option>
+
+                    <option value="Budget Friendly">
+                        💰 Budget Friendly
+                    </option>
+
+                </select>
+
+
+                <!-- TRANSPORT STYLE -->
+
+                <label for="transport_style" style="margin-top: 15px;">
+                    Transport Style
+                </label>
+
+                <select
+                    id="transport_style"
+                    name="transport_style"
+                    required
+                >
+
+                    <option value="Bike">
+                        🏍️ Bike
+                    </option>
+
+                    <option value="Car" selected>
+                        🚗 Car
+                    </option>
+
+                    <option value="Bus / RTC">
+                        🚌 Bus / RTC
+                    </option>
+
+                    <option value="Train">
+                        🚆 Train
+                    </option>
+
+                </select>
+
+                <br><br>
+
+                <!-- ACTIONS -->
+                
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <a href="index.html" class="primary-btn" style="background: transparent; color: #5ddcff; border: 2px solid #5ddcff; text-align: center; flex: 1;">
+                        ← Back
+                    </a>
+                    
+                    <button
+                        type="submit"
+                        class="primary-btn" style="flex: 2;">
+    
+                        NEXT →
+    
+                    </button>
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Pre-fill form from sessionStorage if available
+        document.addEventListener("DOMContentLoaded", function() {
+            if (sessionStorage.getItem("current_location")) {
+                document.getElementById("current_location").value = sessionStorage.getItem("current_location");
+            }
+            if (sessionStorage.getItem("destination")) {
+                document.getElementById("destination").value = sessionStorage.getItem("destination");
+            }
+            if (sessionStorage.getItem("days")) {
+                document.getElementById("days").value = sessionStorage.getItem("days");
+            }
+            if (sessionStorage.getItem("travelers")) {
+                document.getElementById("travelers").value = sessionStorage.getItem("travelers");
+            }
+            if (sessionStorage.getItem("budget")) {
+                document.getElementById("budget").value = sessionStorage.getItem("budget");
+            }
+            if (sessionStorage.getItem("travel_style")) {
+                document.getElementById("travel_style").value = sessionStorage.getItem("travel_style");
+            }
+            if (sessionStorage.getItem("transport_style")) {
+                document.getElementById("transport_style").value = sessionStorage.getItem("transport_style");
+            }
+        });
+
+        document.getElementById("trip-details-form").addEventListener("submit", function (e) {
+
+            e.preventDefault();
+
+            // Save Step 1 data to sessionStorage
+            sessionStorage.setItem("current_location",document.getElementById("current_location").value);
+            sessionStorage.setItem("destination",     document.getElementById("destination").value);
+            sessionStorage.setItem("days",            document.getElementById("days").value);
+            sessionStorage.setItem("travelers",       document.getElementById("travelers").value);
+            sessionStorage.setItem("budget",          document.getElementById("budget").value);
+            sessionStorage.setItem("travel_style",    document.getElementById("travel_style").value);
+            sessionStorage.setItem("transport_style", document.getElementById("transport_style").value);
+
+            window.location.href = "preferences.html";
+
+        });
+
+    </script>
+
+</body>
+
+</html>

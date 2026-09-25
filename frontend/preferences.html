@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Choose your travel preferences to get the perfect AI-generated itinerary.">
+
+    <title>Preferences | AI Travel Planner</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<body>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const user = await checkAuth();
+            if (!user || !user.logged_in) {
+                window.location.href = "signin.html";
+            }
+        });
+    </script>
+
+<div class="form-page">
+
+    <div class="form-card preferences-card">
+
+
+        <div class="step">
+            STEP 2 OF 2
+        </div>
+
+
+        <h1>
+            What do you enjoy?
+        </h1>
+
+
+        <p class="subtitle">
+            Select the activities and experiences
+            you would like to include in your trip.
+        </p>
+
+
+        <form id="preferences-form">
+
+
+            <div class="preferences-grid">
+
+
+                <!-- CULTURE -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Culture"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            🏛️
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Culture
+                            </strong>
+
+                            <small>
+                                Heritage &amp; traditions
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <!-- ADVENTURE -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Adventure"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            🏔️
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Adventure
+                            </strong>
+
+                            <small>
+                                Thrills &amp; activities
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <!-- FOOD -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Food &amp; Drink"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            🍴
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Food &amp; Drink
+                            </strong>
+
+                            <small>
+                                Local cuisine
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <!-- NATURE -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Nature"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            🌳
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Nature
+                            </strong>
+
+                            <small>
+                                Parks &amp; landscapes
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <!-- NIGHTLIFE -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Nightlife"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            🌙
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Nightlife
+                            </strong>
+
+                            <small>
+                                Evening experiences
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <!-- SHOPPING -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Shopping"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            🛍️
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Shopping
+                            </strong>
+
+                            <small>
+                                Markets &amp; stores
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <!-- RELAXATION -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Relaxation"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            😌
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Relaxation
+                            </strong>
+
+                            <small>
+                                Rest &amp; wellness
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <!-- PHOTOGRAPHY -->
+
+                <label class="preference-option">
+
+                    <input
+                        type="checkbox"
+                        name="preferences"
+                        value="Photography"
+                    >
+
+                    <div class="preference-content">
+
+                        <div class="preference-icon">
+                            📷
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Photography
+                            </strong>
+
+                            <small>
+                                Scenic locations
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+            </div>
+
+
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <a href="trip-details.html" class="primary-btn" style="background: transparent; color: #5ddcff; border: 2px solid #5ddcff; text-align: center; flex: 1;">
+                    ← Back
+                </a>
+                
+                <button
+                    type="submit"
+                    class="primary-btn" style="flex: 2;">
+    
+                    ✨ GENERATE MY TRIP
+    
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Pre-check checkboxes from sessionStorage if available
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedPreferences = sessionStorage.getItem("preferences");
+        if (savedPreferences) {
+            try {
+                const prefsArray = JSON.parse(savedPreferences);
+                const checkboxes = document.querySelectorAll('input[name="preferences"]');
+                checkboxes.forEach(function(cb) {
+                    if (prefsArray.includes(cb.value)) {
+                        cb.checked = true;
+                    }
+                });
+            } catch (e) {
+                console.error("Failed to parse preferences from sessionStorage");
+            }
+        }
+    });
+
+    document.getElementById("preferences-form").addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        // Collect selected preferences
+        const checked = document.querySelectorAll('input[name="preferences"]:checked');
+        const preferences = Array.from(checked).map(function (cb) { return cb.value; });
+
+        sessionStorage.setItem("preferences", JSON.stringify(preferences));
+
+        // Navigate to loading page
+        window.location.href = "loading.html";
+
+    });
+
+</script>
+
+</body>
+
+</html>

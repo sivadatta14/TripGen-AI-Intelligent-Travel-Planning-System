@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Creating Your Trip | AI Travel Planner</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<body>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const user = await checkAuth();
+            if (!user || !user.logged_in) {
+                window.location.href = "signin.html";
+            }
+        });
+    </script>
+
+    <div class="loading-page">
+
+        <div class="loading-card">
+
+            <div class="loading-icon">
+                ✈️
+            </div>
+
+            <h1>
+                Creating Your Dream Trip
+            </h1>
+
+            <p>
+                Our AI is planning the perfect itinerary
+                based on your preferences...
+            </p>
+
+            <div class="loader">
+
+                <div class="loader-bar"></div>
+
+            </div>
+
+            <div class="loading-steps">
+
+                <div class="loading-step active" id="step-1">
+                    ✓ Understanding your preferences
+                </div>
+
+                <div class="loading-step active" id="step-2">
+                    ✓ Finding the best places
+                </div>
+
+                <div class="loading-step" id="step-3">
+                    ◌ Creating your day-by-day itinerary
+                </div>
+
+                <div class="loading-step" id="step-4">
+                    ◌ Calculating your budget
+                </div>
+
+            </div>
+
+            <p id="error-msg" style="color:#ff6b6b; margin-top: 20px; display:none;"></p>
+
+        </div>
+
+    </div>
+
+
+    <script src="js/api.js"></script>
+
+    <script>
+
+        // =========================
+        // ANIMATE STEPS
+        // =========================
+
+        setTimeout(function () {
+            document.getElementById("step-3").classList.add("active");
+            document.getElementById("step-3").textContent = "✓ Creating your day-by-day itinerary";
+        }, 1200);
+
+        setTimeout(function () {
+            document.getElementById("step-4").classList.add("active");
+            document.getElementById("step-4").textContent = "✓ Calculating your budget";
+        }, 2400);
+
+
+        // =========================
+        // READ SESSION STORAGE
+        // =========================
+
+        const current_location = sessionStorage.getItem("current_location") || "";
+        const destination  = sessionStorage.getItem("destination")  || "";
+        const days         = sessionStorage.getItem("days")         || "1";
+        const travelers    = sessionStorage.getItem("travelers")     || "1";
+        const budget       = sessionStorage.getItem("budget")       || "0";
+        const travel_style = sessionStorage.getItem("travel_style") || "Balanced";
+        const transport_style = sessionStorage.getItem("transport_style") || "Car";
+        const preferences  = JSON.parse(sessionStorage.getItem("preferences") || "[]");
+
+
+        // =========================
+        // CALL API
+        // =========================
+
+        generateTrip({
+            current_location,
+            destination,
+            days,
+            travelers,
+            budget,
+            travel_style,
+            transport_style,
+            preferences
+        })
+        .then(function (data) {
+
+            // Store full trip data in sessionStorage for the results page
+            sessionStorage.setItem("trip_data", JSON.stringify(data));
+
+            window.location.href = "results.html";
+
+        })
+        .catch(function (err) {
+
+            if (err.budget_error) {
+                const card = document.querySelector(".loading-card");
+                card.innerHTML = `
+                    <div class="loading-icon" style="color: #f39c12;">⚠️</div>
+                    <h1 style="color: #f39c12;">Budget Too Low</h1>
+                    <p style="color: #ff6b6b; font-size: 1.1rem;">Your ₹${budget} total budget is not sufficient for this trip.</p>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left;">
+                        <p style="font-size: 1.1rem;"><strong>Estimated minimum realistic cost: ₹${err.minimum_required}</strong></p>
+                        <ul style="color: #a0aec0; margin-top: 15px; padding-left: 20px; line-height: 1.6;">
+                            <li><strong>Transport:</strong> ₹${err.transport_cost} <br><small>(${err.transport_source})</small></li>
+                            <li><strong>Accommodation:</strong> ₹${err.accommodation}</li>
+                            <li><strong>Food:</strong> ₹${err.food}</li>
+                            <li><strong>Activities:</strong> ₹${err.activities}</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 25px; text-align: left;">
+                        <p style="color: #e2e8f0; font-weight: bold;">You can:</p>
+                        <ul style="color: #a0aec0; padding-left: 20px; margin-top: 10px; margin-bottom: 25px; line-height: 1.5;">
+                            <li>Increase your total budget</li>
+                            <li>Reduce the number of days</li>
+                            <li>Change the transport option</li>
+                            <li>Reduce the number of travelers</li>
+                            <li>Choose a closer destination</li>
+                        </ul>
+                    </div>
+
+                    <button onclick="window.location.href='trip-details.html'" class="primary-btn full-btn" style="background: transparent; color: #5ddcff; border: 2px solid #5ddcff;">← Go Back & Edit Details</button>
+                `;
+            } else {
+                const msg = document.getElementById("error-msg");
+                msg.style.display = "block";
+                msg.textContent = "Error: " + err.message + ". Please go back and try again.";
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

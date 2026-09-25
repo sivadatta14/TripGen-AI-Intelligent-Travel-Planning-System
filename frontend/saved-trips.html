@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Your saved AI travel plans.">
+
+    <title>Saved Trips | AI Travel Planner</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+<body>
+    <nav class="navbar" style="position: absolute; top: 0; left: 0; right: 0; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 10;">
+        <div class="logo">
+            <a href="index.html" style="color: inherit; text-decoration: none;">✈️ AI Travel Planner</a>
+        </div>
+        <div id="nav-buttons">
+            <!-- Dynamically populated by JS -->
+        </div>
+    </nav>
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const nav = document.getElementById("nav-buttons");
+            const user = await checkAuth();
+            if (user && user.logged_in) {
+                nav.innerHTML = `
+                    <span style="color: #a0aec0; margin-right: 15px;">Welcome, ${user.name}</span>
+                    <a href="saved-trips.html" class="nav-btn" style="color: white; text-decoration: none; margin-right: 15px;">💾 Saved Trips</a>
+                    <button onclick="logOut()" class="nav-btn" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; cursor: pointer; padding: 8px 15px; border-radius: 8px;">Logout</button>
+                `;
+            } else {
+                window.location.href = "signin.html";
+            }
+        });
+    </script>
+
+<div class="results-page">
+
+    <div class="results-header">
+
+        <div>
+
+            <div class="step">
+                YOUR SAVED TRIPS
+            </div>
+
+            <h1>
+                Saved Trips 💾
+            </h1>
+
+            <p>
+                Your saved travel plans are listed here.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div id="trips-container">
+
+        <div class="summary-card" id="loading-msg">
+            <p>Loading your saved trips...</p>
+        </div>
+
+    </div>
+
+
+    <div class="results-actions">
+
+        <a href="index.html"
+           class="primary-btn">
+
+            ← Plan Another Trip
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<script src="js/api.js"></script>
+
+<script>
+
+    const container = document.getElementById("trips-container");
+
+
+    // =========================
+    // LOAD SAVED TRIPS
+    // =========================
+
+    getSavedTrips()
+        .then(function (data) {
+
+            container.innerHTML = "";
+
+            const trips = data.trips || [];
+
+            if (trips.length === 0) {
+
+                container.innerHTML = `
+                    <div class="summary-card">
+                        <h2>No Saved Trips Yet</h2>
+                        <p>Generate a trip and click <strong>Save Trip</strong> to save it here.</p>
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            trips.forEach(function (trip) {
+
+                const card = document.createElement("div");
+                card.className = "summary-card";
+
+                card.innerHTML = `
+                    <div>
+                        <small>Destination</small>
+                        <strong>📍 ${trip.destination}</strong>
+                    </div>
+
+                    <div>
+                        <small>Duration</small>
+                        <strong>🗓️ ${trip.days} Days</strong>
+                    </div>
+
+                    <div>
+                        <small>Budget</small>
+                        <strong>💰 ₹${trip.budget}</strong>
+                    </div>
+
+                    <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="primary-btn view-btn" data-id="${trip.id}">
+                            👁️ View Trip
+                        </button>
+                        <button class="primary-btn delete-btn" data-id="${trip.id}"
+                                style="background: #c0392b;">
+                            🗑️ Remove
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+
+            });
+
+
+            // =========================
+            // VIEW SAVED TRIP
+            // =========================
+
+            document.querySelectorAll(".view-btn").forEach(function (btn) {
+
+                btn.addEventListener("click", function () {
+
+                    const tripId = this.getAttribute("data-id");
+
+                    getTrip(tripId)
+                        .then(function (tripData) {
+                            tripData.trip_id = tripId;
+                            sessionStorage.setItem("trip_data", JSON.stringify(tripData));
+                            window.location.href = "results.html";
+                        })
+                        .catch(function (err) {
+                            alert("Could not load trip: " + err.message);
+                        });
+
+                });
+
+            });
+
+
+            // =========================
+            // REMOVE SAVED TRIP
+            // =========================
+
+            document.querySelectorAll(".delete-btn").forEach(function (btn) {
+
+                btn.addEventListener("click", function () {
+
+                    const tripId = this.getAttribute("data-id");
+                    const cardEl = this.closest(".summary-card");
+
+                    deleteSavedTrip(tripId)
+                        .then(function () {
+                            cardEl.remove();
+
+                            if (container.querySelectorAll(".summary-card").length === 0) {
+                                container.innerHTML = `
+                                    <div class="summary-card">
+                                        <h2>No Saved Trips Yet</h2>
+                                        <p>Generate a trip and click <strong>Save Trip</strong> to save it here.</p>
+                                    </div>
+                                `;
+                            }
+                        })
+                        .catch(function (err) {
+                            alert("Failed to remove trip: " + err.message);
+                        });
+
+                });
+
+            });
+
+        })
+        .catch(function (err) {
+
+            container.innerHTML = `
+                <div class="summary-card">
+                    <p style="color:#ff6b6b;">Failed to load saved trips: ${err.message}</p>
+                </div>
+            `;
+
+        });
+
+</script>
+
+</body>
+
+</html>
